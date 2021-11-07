@@ -1,0 +1,18 @@
+{
+  "name": "pizzapp",
+  "version": "1.0.0",
+  "description": "Pizza app helping pizza shops to deliver and grow.",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon app.js"
+  },
+  "author": "Klement BINAJ",
+  "license": "ISC",
+  "dependencies": {
+    "ejs": "^3.1.6",
+    "express": "^4.17.1",
+    "nodemon": "^2.0.13",
+    "serve-favicon": "^2.5.0"
+  }
+}

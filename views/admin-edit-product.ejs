@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script
+      src="https://kit.fontawesome.com/4d515a562c.js"
+      crossorigin="anonymous"
+    ></script>
+    <link rel="stylesheet" href="/css/product-edit.css" />
+    <link rel="icon" href="favicon.ico?v=1.1" />
+    <title>pizzApp</title>
+  </head>
+  <body>
+    <div class="page">
+      <div class="sidemenu">
+        <!-- Todo  -->
+        <div class="logo">
+          <img src="/images/logo.png" alt="" />
+        </div>
+
+        <div class="categories">
+          <a href="/admin/products/hamburger" class="btn category">
+            <img src="/images/hamburger.png" alt="hamburger" />
+          </a>
+          <a href="/admin/products/pizza" class="btn visited category">
+            <img src="/images/pizzamin.png" alt="" />
+          </a>
+          <a href="/admin/products/crepe" class="btn category">
+            <img src="/images/crepe.png" alt="" />
+          </a>
+          <a href="/admin/products/drinks" class="btn category">
+            <img src="/images/sandwich.png" alt="" />
+          </a>
+        </div>
+      </div>
+
+      <div class="mainarea">
+        <div class="background"></div>
+        <div class="navbar">
+          <ul>
+            <li><a href="/" class="selected">Foo</a><span>d</span></li>
+            <li><a href="/about">About </a><span>Us</span></li>
+            <li><a href="#">Contact </a><span>Us</span></li>
+          </ul>
+        </div>
+        <!-- Hero -->
+        <div class="hero">
+          <div class="products-container">
+            <form
+              action="/admin/products/Pizza/<% if(newItem){ %><%=0%><% }else{ %>   <%= product.id %> <% } %>/edit"
+              method="post"
+            >
+              <div class="product-content">
+                <input
+                  value="<%if(!newItem){%><%=product.name%><%}%>"
+                  name="name"
+                  placeholder="Product Name"
+                />
+                <input
+                  value="<% if(!newItem){ %><%=product.ingredients%><% } %>"
+                  name="ingredients"
+                  placeholder="Ingredients"
+                />
+                <div>
+                  <input
+                    value="<% if(!newItem){ %><%=product.price%><% } %>"
+                    name="price"
+                    placeholder="Price"
+                  />
+                  <span>$</span>
+                </div>
+                <input
+                  value="<% if(!newItem){ %><%=product.image%><% } %>"
+                  name="image"
+                  placeholder="Image Url"
+                />
+                <input
+                  type="hidden"
+                  name="category"
+                  value="<% if(!newItem){ %><%=product.category%> <% } %>"
+                />
+                <input
+                  type="hidden"
+                  name="id"
+                  value="<% if(!newItem){ %><%=product.id%><% } %>"
+                />
+                <button type="submit">
+                  <% if(newItem){ %>Add Item<% }else{ %>Edit Item<% }%>
+                </button>
+              </div>
+            </form>
+
+            <div class="product-image">
+              <form
+                action="/admin/products/<%=product.category%>/<%=product.id%>/delete"
+                method="post"
+              >
+                <button
+                  class="btn-delete <% if(newItem){%> hidden <%}%>"
+                  type="submit"
+                >
+                  X
+                </button>
+              </form>
+
+              <img src="/<%=product.image %> " alt="" id="product-image" />
+            </div>
+          </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="items">
+          <div class="social">
+            <i class="fab fa-facebook-f"></i>
+            <i class="fab fa-twitter"></i>
+            <i class="fab fa-instagram-square"></i>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
