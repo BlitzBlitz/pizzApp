@@ -30,12 +30,14 @@ exports.editProduct = (req, res, next) => {
     req.body.id = 0;
     req.body.category = req.params.category;
   }
-  Product.save(req.body);
-  res.redirect("/admin/products/pizza");
+  Product.save(req.body, () => {
+    res.redirect("/admin/products/pizza");
+  });
 };
 
 exports.deleteProduct = (req, res, next) => {
   let productId = req.params.productId;
-  Product.delete(productId);
-  res.redirect("/admin/products/pizza");
+  Product.delete(productId, () => {
+    res.redirect("/admin/products/pizza");
+  });
 };

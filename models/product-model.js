@@ -83,7 +83,7 @@ module.exports = class Product {
       });
   }
 
-  static save(product) {
+  static save(product, redirect) {
     ProductModel.findByPk(product.id)
       .then((foundProduct) => {
         console.log(foundProduct);
@@ -101,6 +101,7 @@ module.exports = class Product {
         }
       })
       .then((result) => {
+        redirect();
         console.log("Succesfully saved: " + product);
       })
       .catch((err) => {
@@ -108,10 +109,14 @@ module.exports = class Product {
       });
   }
 
-  static delete(productId) {
+  static delete(productId, redirect) {
     ProductModel.findByPk(productId)
       .then((product) => {
         return product.destroy();
+      })
+      .then((result) => {
+        console.log(result);
+        redirect();
       })
       .catch((err) => {
         console.log("Error deleting product with id: " + productId + err);

@@ -1,0 +1,3 @@
+1) Async redirection
+        When editing, adding, deleting items redirect using callbacks in order to redirect after the editing,saving or deleting is done
+        Otherwise your page won`t be sync with DB as you will redirect before [editing,saving or deleting] is done
