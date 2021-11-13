@@ -9,7 +9,7 @@ const dataPath = path.join(
   "product-data.json"
 );
 
-const Product = sequelize.define("product", {
+const ProductModel = sequelize.define("product", {
   id: {
     type: Sequelize.INTEGER,
     autoIncrement: true,
@@ -35,59 +35,92 @@ const Product = sequelize.define("product", {
 });
 
 module.exports = class Product {
-  constructor(id, category, name, ingredients, price) {
+  constructor(id, category, name, ingredients, price, image) {
     this.id = id;
     this.category = category;
     this.name = name;
     this.ingredients = ingredients;
     this.price = price;
+    this.image = image;
   }
 
   static fetchAll(callback) {
-    fs.readFile(dataPath, (err, fileContent) => {
-      if (err) {
-        callback([]);
-      } else {
-        callback(JSON.parse(fileContent));
-      }
-    });
+    ProductModel.findAll()
+      .then((results) => {
+        const products = [];
+        if (results.length != 0) {
+          results.forEach((element) => {
+            element = element.dataValues;
+            element = new Product(
+              element.id,
+              element.category,
+              element.name,
+              ["Cheese", "Sauce"], //TODO
+              element.price,
+              element.image
+            );
+            products.push(element);
+          });
+        }
+        callback(products);
+      })
+      .catch((err) => {
+        console.log("Fetch All failed" + err);
+      });
   }
   static fetchOne(productId, callback) {
-    fs.readFile(dataPath, (err, fileContent) => {
-      if (err) {
-        callback();
-      } else {
-        const products = JSON.parse(fileContent);
-        for (let product of products) {
-          if (product.id == productId) {
-            console.log(product);
-            return callback(product);
-          }
+    ProductModel.findByPk(productId)
+      .then((result) => {
+        if (result) {
+          result.ingredients = ["Cheese", "Sauce"];
+        } else {
+          result = new Product();
         }
-        return callback({});
-      }
-    });
+        callback(result);
+      })
+      .catch((err) => {
+        console.log("Fetch One failed\n" + err);
+      });
   }
 
   static save(product) {
-    Product.fetchAll((products) => {
-      let index = products.findIndex((p) => p.id === product.id);
-      if (index !== -1) {
-        products[index] = product;
-      } else {
-        products.push(product);
-      }
-      fs.writeFile(dataPath, JSON.stringify(products), (err) =>
-        console.log(err)
-      );
-    });
+    ProductModel.findByPk(product.id)
+      .then((foundProduct) => {
+        console.log(foundProduct);
+
+        if (foundProduct != null) {
+          //if product exist => update
+          foundProduct.name = product.name;
+          foundProduct.price = product.price;
+          foundProduct.category = product.category;
+          foundProduct.image = product.image;
+          return foundProduct.save();
+        } else {
+          //if product does not exist => create
+          return ProductModel.create(product);
+        }
+      })
+      .then((result) => {
+        console.log("Succesfully saved: " + product);
+      })
+      .catch((err) => {
+        console.log("Error saving: " + product + err);
+      });
   }
+
   static delete(productId) {
-    Product.fetchAll((products) => {
-      products = products.filter((p) => p.id != productId);
-      fs.writeFile(dataPath, JSON.stringify(products), (err) =>
-        console.log(err)
-      );
-    });
+    ProductModel.findByPk(productId)
+      .then((product) => {
+        return product.destroy();
+      })
+      .catch((err) => {
+        console.log("Error deleting product with id: " + productId + err);
+      });
+    // Product.fetchAll((products) => {
+    //   products = products.filter((p) => p.id != productId);
+    //   fs.writeFile(dataPath, JSON.stringify(products), (err) =>
+    //     console.log(err)
+    //   );
+    // });
   }
 };
