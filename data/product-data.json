@@ -1,1 +1,34 @@
-[{"name":"Pepperoni","ingredients":"Cheese, Laker, Olive, Borzi","price":"110.00","image":"images/pizza/pepperoni.png","category":"Pizza","id":"3"},{"name":"Veggi","ingredients":"Cheese, Laker, Olive, Borzi","price":"110.00","image":"images/pizza/veggi.png","category":"Pizza","id":"4"},{"name":"Mashroom","ingredients":"Cheese, Laker, Olive, Borzi","price":"110.00","image":"images/pizza/mashroom.png","category":"Pizza","id":"5"},{"name":"Capricozza","ingredients":"Cheese, Laker, Olive, Borzi","price":"20","image":"images/pizza/capricozza.png","category":"Pizza","id":"0.4112111107528653"}]
+[
+  {
+    "name": "Pepperoni",
+    "ingredients": "Cheese, Laker, Olive, Borzi",
+    "price": "110.00",
+    "image": "images/pizza/pepperoni.png",
+    "category": "Pizza",
+    "id": "3"
+  },
+  {
+    "name": "Veggi",
+    "ingredients": "Cheese, Laker, Olive, Borzi",
+    "price": "110.00",
+    "image": "images/pizza/veggi.png",
+    "category": "Pizza",
+    "id": "4"
+  },
+  {
+    "name": "Mashroom",
+    "ingredients": "Cheese, Laker, Olive, Borzi",
+    "price": "110.00",
+    "image": "images/pizza/mashroom.png",
+    "category": "Pizza",
+    "id": "5"
+  },
+  {
+    "name": "Capricozza",
+    "ingredients": "Cheese, Laker, Olive, Borzi",
+    "price": "20",
+    "image": "images/pizza/capricozza.png",
+    "category": "Pizza",
+    "id": "0.4112111107528653"
+  }
+]
