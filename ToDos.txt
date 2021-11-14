@@ -1,1 +1,2 @@
-1) Items not updating when redirecting after update,add,delete      DONE
+1) Items not updating when redirecting after update,add,delete (Solution: Async redirecting)     DONE
+2) Add ingredients table and connect it to product
