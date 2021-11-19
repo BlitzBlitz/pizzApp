@@ -6,6 +6,9 @@ const adminRoutes = require("./routes/admin-routes");
 const path = require("path");
 const favicon = require("serve-favicon");
 const sequelize = require("./util/database");
+const ProductModel = require("./models/product-model");
+const IngredientModel = require("./models/ingredient-model");
+const Product = require("./models/product-model");
 
 const app = express();
 
@@ -23,6 +26,12 @@ app.use(favicon(path.join(__dirname, "public", "images", "favicon.ico")));
 app.use("/product", productRoutes.router);
 app.use("/about", aboutRoutes.router);
 app.use("/admin", adminRoutes.router);
+
+ProductModel.hasMany(IngredientModel);
+IngredientModel.belongsTo(ProductModel, {
+  constraints: true,
+  onDelete: "CASCADE",
+});
 
 sequelize
   .sync()
