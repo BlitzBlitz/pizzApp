@@ -5,12 +5,14 @@ const Product = require("../models/product-model");
 exports.getProducts = (req, res, next) => {
   const category = req.params["category"];
 
-  Product.fetchAll((products) => {
-    res.render("admin", {
-      products: products,
-      category: category,
-    });
-  });
+  Product.fetchAll(() => {});
+
+  // Product.fetchAll((products) => {
+  //   res.render("admin", {
+  //     products: products,
+  //     category: category,
+  //   });
+  // });
 };
 
 exports.getProduct = (req, res, next) => {

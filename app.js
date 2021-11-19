@@ -27,13 +27,11 @@ app.use("/product", productRoutes.router);
 app.use("/about", aboutRoutes.router);
 app.use("/admin", adminRoutes.router);
 
-ProductModel.hasMany(IngredientModel);
-IngredientModel.belongsTo(ProductModel, {
-  constraints: true,
-  onDelete: "CASCADE",
-});
+ProductModel.belongsToMany(IngredientModel, { through: "ProductIngredients" });
+IngredientModel.belongsToMany(ProductModel, { through: "ProductIngredients" });
 
 sequelize
+  // .sync({ force: true })
   .sync()
   .then((result) => {
     const server = app.listen(3000);
