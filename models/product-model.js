@@ -1,13 +1,5 @@
-const fs = require("fs");
-const path = require("path");
 const Sequelize = require("sequelize");
 const sequelize = require("../util/database");
-
-const dataPath = path.join(
-  path.dirname(__dirname),
-  "data",
-  "product-data.json"
-);
 
 const ProductModel = sequelize.define("product", {
   id: {
@@ -121,11 +113,5 @@ module.exports = class Product {
       .catch((err) => {
         console.log("Error deleting product with id: " + productId + err);
       });
-    // Product.fetchAll((products) => {
-    //   products = products.filter((p) => p.id != productId);
-    //   fs.writeFile(dataPath, JSON.stringify(products), (err) =>
-    //     console.log(err)
-    //   );
-    // });
   }
 };
