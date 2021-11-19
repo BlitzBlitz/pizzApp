@@ -1,5 +1,6 @@
 const Sequelize = require("sequelize");
 const sequelize = require("../util/database");
+const IngredientModel = require("./ingredient-model");
 
 const ProductModel = sequelize.define("product", {
   id: {
@@ -26,7 +27,7 @@ const ProductModel = sequelize.define("product", {
   },
 });
 
-module.exports = class Product {
+exports.Product = class Product {
   constructor(id, category, name, ingredients, price, image) {
     this.id = id;
     this.category = category;
@@ -37,23 +38,11 @@ module.exports = class Product {
   }
 
   static fetchAll(callback) {
-    ProductModel.findAll()
+    ProductModel.findAll({ include: IngredientModel })
       .then((results) => {
-        const products = [];
-        if (results.length != 0) {
-          results.forEach((element) => {
-            element = element.dataValues;
-            element = new Product(
-              element.id,
-              element.category,
-              element.name,
-              ["Cheese", "Sauce"], //TODO
-              element.price,
-              element.image
-            );
-            products.push(element);
-          });
-        }
+        console.log(results);
+
+        const products = []; //TODO
         callback(products);
       })
       .catch((err) => {
@@ -76,6 +65,9 @@ module.exports = class Product {
   }
 
   static save(product, redirect) {
+    product.ingredients = product.ingredients.split(", ");
+    console.log(product);
+
     ProductModel.findByPk(product.id)
       .then((foundProduct) => {
         console.log(foundProduct);
@@ -89,7 +81,13 @@ module.exports = class Product {
           return foundProduct.save();
         } else {
           //if product does not exist => create
-          return ProductModel.create(product);
+          return ProductModel.create(product)
+            .then((savedProduct) => {
+              savedProduct.create;
+            })
+            .catch((err) => {
+              console.log("Error saving: " + product + err);
+            });
         }
       })
       .then((result) => {
@@ -116,4 +114,4 @@ module.exports = class Product {
   }
 };
 
-module.exports = ProductModel;
+exports.ProductModel = ProductModel;

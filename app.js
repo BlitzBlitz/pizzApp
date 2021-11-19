@@ -6,9 +6,8 @@ const adminRoutes = require("./routes/admin-routes");
 const path = require("path");
 const favicon = require("serve-favicon");
 const sequelize = require("./util/database");
-const ProductModel = require("./models/product-model");
+const { ProductModel } = require("./models/product-model");
 const IngredientModel = require("./models/ingredient-model");
-const Product = require("./models/product-model");
 
 const app = express();
 
