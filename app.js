@@ -8,6 +8,7 @@ const favicon = require("serve-favicon");
 const sequelize = require("./util/database");
 const { ProductModel } = require("./models/product-model");
 const IngredientModel = require("./models/ingredient-model");
+const ProductIngredientModel = require("./models/productingredient-model");
 
 const app = express();
 
@@ -26,8 +27,12 @@ app.use("/product", productRoutes.router);
 app.use("/about", aboutRoutes.router);
 app.use("/admin", adminRoutes.router);
 
-ProductModel.belongsToMany(IngredientModel, { through: "ProductIngredients" });
-IngredientModel.belongsToMany(ProductModel, { through: "ProductIngredients" });
+ProductModel.belongsToMany(IngredientModel, {
+  through: ProductIngredientModel,
+});
+IngredientModel.belongsToMany(ProductModel, {
+  through: ProductIngredientModel,
+});
 
 sequelize
   // .sync({ force: true })

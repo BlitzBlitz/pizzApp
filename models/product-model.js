@@ -1,6 +1,7 @@
 const Sequelize = require("sequelize");
 const sequelize = require("../util/database");
 const IngredientModel = require("./ingredient-model");
+const ProductIngredientModel = require("./models/productingredient-model");
 
 const ProductModel = sequelize.define("product", {
   id: {
@@ -72,8 +73,8 @@ exports.Product = class Product {
       .then((foundProduct) => {
         console.log(foundProduct);
 
+        //if product exist => update
         if (foundProduct != null) {
-          //if product exist => update
           foundProduct.name = product.name;
           foundProduct.price = product.price;
           foundProduct.category = product.category;
@@ -83,7 +84,14 @@ exports.Product = class Product {
           //if product does not exist => create
           return ProductModel.create(product)
             .then((savedProduct) => {
-              savedProduct.create;
+              IngredientModel.findOrCreate({
+                where: { name: product.ingredients[0] },
+              }).then((ingredient) => {
+                console.log(ingredient);
+                savedProduct.addIngredient(ingredient, {
+                  through: ProductIngredientModel,
+                });
+              });
             })
             .catch((err) => {
               console.log("Error saving: " + product + err);
