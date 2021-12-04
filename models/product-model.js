@@ -1,7 +1,7 @@
 const Sequelize = require("sequelize");
 const sequelize = require("../util/database");
 const IngredientModel = require("./ingredient-model");
-const ProductIngredientModel = require("./models/productingredient-model");
+const ProductIngredientModel = require("./productingredient-model");
 
 const ProductModel = sequelize.define("product", {
   id: {
