@@ -65,9 +65,26 @@ exports.Product = class Product {
       });
   }
 
+  static addIngredients(savedProduct, ingredients) {
+    IngredientModel.findOrCreate({
+      where: { name: ingredients[0] },
+    }).then((result) => {
+      savedProduct.addIngredient(result[0], {
+        through: ProductIngredientModel,
+      });
+    });
+  }
+
+  static updateProduct(foundProduct, product) {
+    foundProduct.name = product.name;
+    foundProduct.price = product.price;
+    foundProduct.category = product.category;
+    foundProduct.image = product.image;
+    return foundProduct.save();
+  }
+
   static save(product, redirect) {
     product.ingredients = product.ingredients.split(", ");
-    console.log(product);
 
     ProductModel.findByPk(product.id)
       .then((foundProduct) => {
@@ -75,23 +92,12 @@ exports.Product = class Product {
 
         //if product exist => update
         if (foundProduct != null) {
-          foundProduct.name = product.name;
-          foundProduct.price = product.price;
-          foundProduct.category = product.category;
-          foundProduct.image = product.image;
-          return foundProduct.save();
+          return this.updateProduct(foundProduct, product);
         } else {
           //if product does not exist => create
           return ProductModel.create(product)
             .then((savedProduct) => {
-              IngredientModel.findOrCreate({
-                where: { name: product.ingredients[0] },
-              }).then((ingredient) => {
-                console.log(ingredient);
-                savedProduct.addIngredient(ingredient, {
-                  through: ProductIngredientModel,
-                });
-              });
+              this.addIngredients(savedProduct, product.ingredients);
             })
             .catch((err) => {
               console.log("Error saving: " + product + err);
