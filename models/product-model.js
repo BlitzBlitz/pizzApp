@@ -66,7 +66,7 @@ exports.Product = class Product {
   }
 
   static addIngredients(savedProduct, ingredients) {
-    IngredientModel.findOrCreate({
+    return IngredientModel.findOrCreate({
       where: { name: ingredients[0] },
     }).then((result) => {
       savedProduct.addIngredient(result[0], {
@@ -88,8 +88,6 @@ exports.Product = class Product {
 
     ProductModel.findByPk(product.id)
       .then((foundProduct) => {
-        console.log(foundProduct);
-
         //if product exist => update
         if (foundProduct != null) {
           return this.updateProduct(foundProduct, product);
@@ -97,19 +95,19 @@ exports.Product = class Product {
           //if product does not exist => create
           return ProductModel.create(product)
             .then((savedProduct) => {
-              this.addIngredients(savedProduct, product.ingredients);
+              return this.addIngredients(savedProduct, product.ingredients);
             })
             .catch((err) => {
-              console.log("Error saving: " + product + err);
+              // console.log("Error saving: " + product + err);
             });
         }
       })
       .then((result) => {
         redirect();
-        console.log("Succesfully saved: " + product);
+        // console.log("Succesfully saved: " + product);
       })
       .catch((err) => {
-        console.log("Error saving: " + product + err);
+        // console.log("Error saving: " + product + err);
       });
   }
 
