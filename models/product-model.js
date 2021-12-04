@@ -41,20 +41,24 @@ exports.Product = class Product {
   static fetchAll(callback) {
     ProductModel.findAll({ include: IngredientModel })
       .then((results) => {
-        console.log(results);
-
-        const products = []; //TODO
-        callback(products);
+        results.map((element) => {
+          //Tried using another map did work
+          for (let i = 0; i < element.ingredients.length; i++) {
+            element.ingredients[i] = element.ingredients[i].name;
+          }
+          return element.dataValues;
+        });
+        callback(results);
       })
       .catch((err) => {
         console.log("Fetch All failed" + err);
       });
   }
   static fetchOne(productId, callback) {
-    ProductModel.findByPk(productId)
+    ProductModel.findByPk(productId, { include: IngredientModel })
       .then((result) => {
         if (result) {
-          result.ingredients = ["Cheese", "Sauce"];
+          result.ingredients = ["Cheese", "Sauce"]; //TODO
         } else {
           result = new Product();
         }
@@ -86,6 +90,9 @@ exports.Product = class Product {
     foundProduct.price = product.price;
     foundProduct.category = product.category;
     foundProduct.image = product.image;
+    foundProduct.getIngredients().then((ingredients) => {
+      console.log(ingredients);
+    });
     return foundProduct.save();
   }
 
