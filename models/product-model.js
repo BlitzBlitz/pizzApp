@@ -66,13 +66,19 @@ exports.Product = class Product {
   }
 
   static addIngredients(savedProduct, ingredients) {
-    return IngredientModel.findOrCreate({
-      where: { name: ingredients[0] },
-    }).then((result) => {
-      savedProduct.addIngredient(result[0], {
-        through: ProductIngredientModel,
-      });
-    });
+    for (let ingredient of ingredients) {
+      IngredientModel.findOrCreate({
+        where: { name: ingredient },
+      })
+        .then((result) => {
+          return savedProduct.addIngredient(result[0], {
+            through: ProductIngredientModel,
+          });
+        })
+        .catch((err) => {
+          // console.log("Error adding ingredients: " + product + err);
+        });
+    }
   }
 
   static updateProduct(foundProduct, product) {
