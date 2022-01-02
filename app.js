@@ -43,3 +43,25 @@ sequelize
   .catch((err) => {
     console.log("Could not connect to DB" + err);
   });
+
+//Tests
+
+let oldIngredients = ["cheese", "tomato", "sauce"];
+let newIngredients = ["cheese", "water", "tomato"];
+
+oldIngredients.forEach((ingredient) => {
+  let newIngIndex = newIngredients.indexOf(ingredient);
+  if (newIngIndex == -1) {
+    oldIngredients.splice(newIngIndex, 1);
+  }
+});
+
+newIngredients.forEach((ingredient) => {
+  let oldIngIndex = oldIngredients.indexOf(ingredient);
+  if (oldIngIndex == -1) {
+    oldIngredients.push(ingredient);
+  }
+});
+
+console.log(oldIngredients);
+console.log(newIngredients);
