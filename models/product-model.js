@@ -42,7 +42,7 @@ exports.Product = class Product {
     ProductModel.findAll({ include: IngredientModel })
       .then((results) => {
         results.map((element) => {
-          //Tried using another map did work
+          //Tried using another map didnt work
           for (let i = 0; i < element.ingredients.length; i++) {
             element.ingredients[i] = element.ingredients[i].name;
           }
@@ -58,11 +58,15 @@ exports.Product = class Product {
     ProductModel.findByPk(productId, { include: IngredientModel })
       .then((result) => {
         if (result) {
-          result.ingredients = ["Cheese", "Sauce"]; //TODO
+          result.dataValues.ingredients = result.dataValues.ingredients.map(
+            (ingredient) => {
+              return ingredient.name;
+            }
+          );
         } else {
           result = new Product();
         }
-        callback(result);
+        callback(result.dataValues);
       })
       .catch((err) => {
         console.log("Fetch One failed\n" + err);
@@ -90,10 +94,21 @@ exports.Product = class Product {
     foundProduct.price = product.price;
     foundProduct.category = product.category;
     foundProduct.image = product.image;
-    foundProduct.getIngredients().then((ingredients) => {
-      console.log(ingredients);
+    //TODO: Updating ingredients
+
+    let newIngs = product.ingredients;
+    foundProduct.getIngredients().then((oldIngs) => {
+      console.log(oldIngs);
+
+      oldIngs.forEach((oldIngredient) => {
+        console.log(oldIngredient.dataValues.name);
+
+        // let newIngIndex = newIngs.indexOf(oldIngredient.dataValues.name);
+        // if (newIngIndex == -1) {
+        //   oldIngs.splice(newIngIndex, 1);
+        // }
+      });
     });
-    return foundProduct.save();
   }
 
   static save(product, redirect) {
