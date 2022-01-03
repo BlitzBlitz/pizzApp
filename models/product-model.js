@@ -41,11 +41,10 @@ exports.Product = class Product {
   static fetchAll(callback) {
     ProductModel.findAll({ include: IngredientModel })
       .then((results) => {
-        results.map((element) => {
-          //Tried using another map didnt work
-          for (let i = 0; i < element.ingredients.length; i++) {
-            element.ingredients[i] = element.ingredients[i].name;
-          }
+        results = results.map((element) => {
+          element.dataValues.ingredients = element.dataValues.ingredients.map(
+            (ingredient) => ingredient.name
+          );
           return element.dataValues;
         });
         callback(results);
