@@ -83,7 +83,7 @@ exports.Product = class Product {
           });
         })
         .catch((err) => {
-          // console.log("Error adding ingredients: " + product + err);
+          console.log("Error adding ingredients: " + product + err);
         });
     }
   }
@@ -124,17 +124,14 @@ exports.Product = class Product {
             .then((savedProduct) => {
               return this.addIngredients(savedProduct, product.ingredients);
             })
-            .catch((err) => {
-              // console.log("Error saving: " + product + err);
-            });
+            .catch((err) => {});
         }
       })
       .then((result) => {
         redirect();
-        // console.log("Succesfully saved: " + product);
       })
       .catch((err) => {
-        // console.log("Error saving: " + product + err);
+        console.log("Error saving: " + product + err);
       });
   }
 
