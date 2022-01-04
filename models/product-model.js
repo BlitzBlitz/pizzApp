@@ -62,19 +62,22 @@ exports.Product = class Product {
               return ingredient.name;
             }
           );
+          result = result.dataValues;
         } else {
           result = new Product();
+          // result.category = "pizza";
         }
-        callback(result.dataValues);
+        callback(result);
       })
       .catch((err) => {
         console.log("Fetch One failed\n" + err);
       });
   }
 
-  static addIngredients(savedProduct, ingredients) {
+  static addIngredients(savedProduct, ingredients, redirect) {
+    let promises = [];
     for (let ingredient of ingredients) {
-      IngredientModel.findOrCreate({
+      let addingPromis = IngredientModel.findOrCreate({
         where: { name: ingredient },
       })
         .then((result) => {
@@ -83,52 +86,75 @@ exports.Product = class Product {
           });
         })
         .catch((err) => {
-          console.log("Error adding ingredients: " + product + err);
+          console.log("Error adding ingredients: " + ingredient + err);
         });
+      promises.push(addingPromis);
     }
+    Promise.all(promises)
+      .then((result) => {
+        redirect();
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   }
 
-  static updateProduct(foundProduct, product) {
+  static updateProduct(foundProduct, product, redirect) {
     foundProduct.name = product.name;
     foundProduct.price = product.price;
     foundProduct.category = product.category;
     foundProduct.image = product.image;
     //TODO: Updating ingredients
 
-    let newIngs = product.ingredients;
+    let newIngsNames = product.ingredients;
+
     foundProduct.getIngredients().then((oldIngs) => {
-      console.log(oldIngs);
-
-      oldIngs.forEach((oldIngredient) => {
-        console.log(oldIngredient.dataValues.name);
-
-        // let newIngIndex = newIngs.indexOf(oldIngredient.dataValues.name);
-        // if (newIngIndex == -1) {
-        //   oldIngs.splice(newIngIndex, 1);
-        // }
-      });
+      let oldIngsNames = oldIngs.map(
+        (ingredient) => ingredient.dataValues.name
+      );
+      //Removing old ings
+      IngredientModel.findAll({ where: { name: oldIngsNames } })
+        .then((foundIngs) => {
+          return foundProduct.removeIngredients(foundIngs);
+        })
+        .then((result) => {
+          //Adding new Ones
+          this.addIngredients(foundProduct, newIngsNames, redirect);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
     });
   }
 
   static save(product, redirect) {
     product.ingredients = product.ingredients.split(", ");
-
+    let found = 0;
     ProductModel.findByPk(product.id)
       .then((foundProduct) => {
         //if product exist => update
         if (foundProduct != null) {
-          return this.updateProduct(foundProduct, product);
+          found = 1;
+          return this.updateProduct(foundProduct, product, redirect);
         } else {
           //if product does not exist => create
           return ProductModel.create(product)
             .then((savedProduct) => {
-              return this.addIngredients(savedProduct, product.ingredients);
+              return this.addIngredients(
+                savedProduct,
+                product.ingredients,
+                redirect
+              );
             })
-            .catch((err) => {});
+            .catch((err) => {
+              console.log(err);
+            });
         }
       })
       .then((result) => {
-        redirect();
+        if (!found) {
+          // redirect();
+        }
       })
       .catch((err) => {
         console.log("Error saving: " + product + err);
@@ -141,7 +167,6 @@ exports.Product = class Product {
         return product.destroy();
       })
       .then((result) => {
-        console.log(result);
         redirect();
       })
       .catch((err) => {

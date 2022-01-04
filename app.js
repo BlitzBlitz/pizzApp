@@ -46,8 +46,8 @@ sequelize
 
 //Tests
 
-let oldIngredients = ["cheese", "tomato", "sauce"];
-let newIngredients = ["cheese", "water", "tomato"];
+let oldIngredients = ["frea", "cheese", "tomato", "sauce"];
+let newIngredients = ["cheese", "frea", "water"];
 
 oldIngredients.forEach((ingredient) => {
   let newIngIndex = newIngredients.indexOf(ingredient);
