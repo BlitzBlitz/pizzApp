@@ -57,12 +57,10 @@ exports.Product = class Product {
     ProductModel.findByPk(productId, { include: IngredientModel })
       .then((result) => {
         if (result) {
-          result.dataValues.ingredients = result.dataValues.ingredients.map(
-            (ingredient) => {
-              return ingredient.name;
-            }
-          );
           result = result.dataValues;
+          result.ingredients = result.ingredients.map(
+            (ingredient) => ingredient.name
+          );
         } else {
           result = new Product();
           // result.category = "pizza";
@@ -99,12 +97,12 @@ exports.Product = class Product {
       });
   }
 
+  //TODO
   static updateProduct(foundProduct, product, redirect) {
     foundProduct.name = product.name;
     foundProduct.price = product.price;
     foundProduct.category = product.category;
     foundProduct.image = product.image;
-    //TODO: Updating ingredients
 
     let newIngsNames = product.ingredients;
 
