@@ -71,7 +71,7 @@ exports.Product = class Product {
         console.log("Fetch One failed\n" + err);
       });
   }
-
+  //TODO
   static addIngredients(savedProduct, ingredients, redirect) {
     let promises = [];
     for (let ingredient of ingredients) {
