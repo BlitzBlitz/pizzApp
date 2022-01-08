@@ -1,13 +1,7 @@
-const fs = require("fs");
-const path = require("path");
 const Sequelize = require("sequelize");
 const sequelize = require("../util/database");
-
-const dataPath = path.join(
-  path.dirname(__dirname),
-  "data",
-  "product-data.json"
-);
+const IngredientModel = require("./ingredient-model");
+const ProductIngredientModel = require("./productingredient-model");
 
 const ProductModel = sequelize.define("product", {
   id: {
@@ -34,7 +28,7 @@ const ProductModel = sequelize.define("product", {
   },
 });
 
-module.exports = class Product {
+exports.Product = class Product {
   constructor(id, category, name, ingredients, price, image) {
     this.id = id;
     this.category = category;
@@ -45,36 +39,31 @@ module.exports = class Product {
   }
 
   static fetchAll(callback) {
-    ProductModel.findAll()
+    ProductModel.findAll({ include: IngredientModel })
       .then((results) => {
-        const products = [];
-        if (results.length != 0) {
-          results.forEach((element) => {
-            element = element.dataValues;
-            element = new Product(
-              element.id,
-              element.category,
-              element.name,
-              ["Cheese", "Sauce"], //TODO
-              element.price,
-              element.image
-            );
-            products.push(element);
-          });
-        }
-        callback(products);
+        results = results.map((element) => {
+          element.dataValues.ingredients = element.dataValues.ingredients.map(
+            (ingredient) => ingredient.name
+          );
+          return element.dataValues;
+        });
+        callback(results);
       })
       .catch((err) => {
         console.log("Fetch All failed" + err);
       });
   }
   static fetchOne(productId, callback) {
-    ProductModel.findByPk(productId)
+    ProductModel.findByPk(productId, { include: IngredientModel })
       .then((result) => {
         if (result) {
-          result.ingredients = ["Cheese", "Sauce"];
+          result = result.dataValues;
+          result.ingredients = result.ingredients.map(
+            (ingredient) => ingredient.name
+          );
         } else {
           result = new Product();
+          // result.category = "pizza";
         }
         callback(result);
       })
@@ -82,27 +71,88 @@ module.exports = class Product {
         console.log("Fetch One failed\n" + err);
       });
   }
+  //TODO
+  static addIngredients(savedProduct, ingredients, redirect) {
+    let promises = [];
+    for (let ingredient of ingredients) {
+      let addingPromis = IngredientModel.findOrCreate({
+        where: { name: ingredient },
+      })
+        .then((result) => {
+          return savedProduct.addIngredient(result[0], {
+            through: ProductIngredientModel,
+          });
+        })
+        .catch((err) => {
+          console.log("Error adding ingredients: " + ingredient + err);
+        });
+      promises.push(addingPromis);
+    }
+    Promise.all(promises)
+      .then((result) => {
+        redirect();
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
+
+  //TODO
+  static updateProduct(foundProduct, product, redirect) {
+    foundProduct.name = product.name;
+    foundProduct.price = product.price;
+    foundProduct.category = product.category;
+    foundProduct.image = product.image;
+
+    let newIngsNames = product.ingredients;
+
+    foundProduct.getIngredients().then((oldIngs) => {
+      let oldIngsNames = oldIngs.map(
+        (ingredient) => ingredient.dataValues.name
+      );
+      //Removing old ings
+      IngredientModel.findAll({ where: { name: oldIngsNames } })
+        .then((foundIngs) => {
+          return foundProduct.removeIngredients(foundIngs);
+        })
+        .then((result) => {
+          //Adding new Ones
+          this.addIngredients(foundProduct, newIngsNames, redirect);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    });
+  }
 
   static save(product, redirect) {
+    product.ingredients = product.ingredients.split(", ");
+    let found = 0;
     ProductModel.findByPk(product.id)
       .then((foundProduct) => {
-        console.log(foundProduct);
-
+        //if product exist => update
         if (foundProduct != null) {
-          //if product exist => update
-          foundProduct.name = product.name;
-          foundProduct.price = product.price;
-          foundProduct.category = product.category;
-          foundProduct.image = product.image;
-          return foundProduct.save();
+          found = 1;
+          return this.updateProduct(foundProduct, product, redirect);
         } else {
           //if product does not exist => create
-          return ProductModel.create(product);
+          return ProductModel.create(product)
+            .then((savedProduct) => {
+              return this.addIngredients(
+                savedProduct,
+                product.ingredients,
+                redirect
+              );
+            })
+            .catch((err) => {
+              console.log(err);
+            });
         }
       })
       .then((result) => {
-        redirect();
-        console.log("Succesfully saved: " + product);
+        if (!found) {
+          // redirect();
+        }
       })
       .catch((err) => {
         console.log("Error saving: " + product + err);
@@ -115,17 +165,12 @@ module.exports = class Product {
         return product.destroy();
       })
       .then((result) => {
-        console.log(result);
         redirect();
       })
       .catch((err) => {
         console.log("Error deleting product with id: " + productId + err);
       });
-    // Product.fetchAll((products) => {
-    //   products = products.filter((p) => p.id != productId);
-    //   fs.writeFile(dataPath, JSON.stringify(products), (err) =>
-    //     console.log(err)
-    //   );
-    // });
   }
 };
+
+exports.ProductModel = ProductModel;

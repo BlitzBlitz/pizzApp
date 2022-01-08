@@ -6,6 +6,9 @@ const adminRoutes = require("./routes/admin-routes");
 const path = require("path");
 const favicon = require("serve-favicon");
 const sequelize = require("./util/database");
+const { ProductModel } = require("./models/product-model");
+const IngredientModel = require("./models/ingredient-model");
+const ProductIngredientModel = require("./models/productingredient-model");
 
 const app = express();
 
@@ -24,7 +27,17 @@ app.use("/product", productRoutes.router);
 app.use("/about", aboutRoutes.router);
 app.use("/admin", adminRoutes.router);
 
+ProductModel.belongsToMany(IngredientModel, {
+  through: ProductIngredientModel,
+});
+IngredientModel.belongsToMany(ProductModel, {
+  through: ProductIngredientModel,
+  onDelete: "cascade",
+  onUpdate: "cascade",
+});
+
 sequelize
+  // .sync({ force: true })
   .sync()
   .then((result) => {
     const server = app.listen(3000);
