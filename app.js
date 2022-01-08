@@ -9,9 +9,13 @@ const sequelize = require("./util/database");
 const { ProductModel } = require("./models/product-model");
 const IngredientModel = require("./models/ingredient-model");
 const ProductIngredientModel = require("./models/productingredient-model");
+const session = require("express-session");
 
 const app = express();
 
+app.use(
+  session({ secret: "mine-secret", resave: false, saveUninitialized: false })
+);
 app.use(
   bodyParser.urlencoded({
     extended: true,

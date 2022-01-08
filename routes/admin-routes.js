@@ -2,6 +2,9 @@ const express = require("express");
 const router = express.Router();
 const adminController = require("../controllers/admin-controller");
 
+router.get("/login", adminController.getLogin);
+router.post("/login", adminController.postLogin);
+
 router.get("/products/:category", adminController.getProducts);
 router.get("/products/:category/:productId/edit", adminController.getProduct);
 router.post("/products/:category/:productId/edit", adminController.editProduct);
