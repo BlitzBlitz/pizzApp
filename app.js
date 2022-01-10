@@ -13,9 +13,17 @@ const session = require("express-session");
 
 const app = express();
 
+const SequelizeStore = require("connect-session-sequelize")(session.Store);
+
 app.use(
-  session({ secret: "mine-secret", resave: false, saveUninitialized: false })
+  session({
+    secret: "mine-secret",
+    resave: false,
+    saveUninitialized: false,
+    store: new SequelizeStore({ db: sequelize }),
+  })
 );
+
 app.use(
   bodyParser.urlencoded({
     extended: true,

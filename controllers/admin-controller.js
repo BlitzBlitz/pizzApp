@@ -1,5 +1,3 @@
-const express = require("express");
-const router = express.Router();
 const { Product } = require("../models/product-model");
 
 exports.getLogin = (req, res, next) => {
@@ -8,27 +6,29 @@ exports.getLogin = (req, res, next) => {
 exports.postLogin = (req, res, next) => {
   let username = req.body.username;
   let password = req.body.password;
-  //TODO connect to DB and check if username and password are correct
+  console.log(username + " " + password);
   if (username == "admin") {
-    req.session.username = username;
     res.redirect("/admin/products/pizza");
   } else {
     res.redirect("/admin/login");
   }
 };
 
+exports.getLogout = (req, res, next) => {
+  req.session.destroy((err) => {
+    res.redirect("/admin/login");
+  });
+};
+
 exports.getProducts = (req, res, next) => {
   const category = req.params["category"];
-  if (req.session.username == "admin") {
-    Product.fetchAll((products) => {
-      res.render("admin", {
-        products: products,
-        category: category,
-      });
+
+  Product.fetchAll((products) => {
+    res.render("admin", {
+      products: products,
+      category: category,
     });
-  } else {
-    res.redirect("/admin/login");
-  }
+  });
 };
 
 exports.getProduct = (req, res, next) => {
