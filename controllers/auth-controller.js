@@ -18,7 +18,14 @@ exports.postLogin = (req, res, next) => {
       bcrypt.compare(req.body.password, user.password, (err, result) => {
         if (result) {
           req.session.username = user.username;
-          res.redirect("/admin/products/pizza");
+          req.session.save((err) => {
+            // if db is slow or not working
+            if (err) {
+              console.log(err);
+              res.redirect("/admin/login");
+            }
+            res.redirect("/admin/products/pizza");
+          });
         } else {
           res.redirect("/admin/login");
         }
