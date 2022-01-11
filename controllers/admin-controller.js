@@ -1,25 +1,5 @@
 const { Product } = require("../models/product-model");
 
-exports.getLogin = (req, res, next) => {
-  res.render("admin-login");
-};
-exports.postLogin = (req, res, next) => {
-  let username = req.body.username;
-  let password = req.body.password;
-  console.log(username + " " + password);
-  if (username == "admin") {
-    res.redirect("/admin/products/pizza");
-  } else {
-    res.redirect("/admin/login");
-  }
-};
-
-exports.getLogout = (req, res, next) => {
-  req.session.destroy((err) => {
-    res.redirect("/admin/login");
-  });
-};
-
 exports.getProducts = (req, res, next) => {
   const category = req.params["category"];
 
@@ -27,6 +7,7 @@ exports.getProducts = (req, res, next) => {
     res.render("admin", {
       products: products,
       category: category,
+      username: req.session.username,
     });
   });
 };

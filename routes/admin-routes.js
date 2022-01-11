@@ -1,11 +1,12 @@
 const express = require("express");
 const router = express.Router();
 const adminController = require("../controllers/admin-controller");
-const auth = require("../controllers/auth");
+const auth = require("../controllers/auth-controller");
 
-router.get("/login", adminController.getLogin);
-router.post("/login", adminController.postLogin);
-router.get("/logout", adminController.getLogout);
+router.get("/login", auth.getLogin);
+router.post("/login", auth.postLogin);
+router.get("/logout", auth.getLogout);
+router.post("/signup", auth.postSignup);
 
 router.get("/products/:category", auth.isAuth, adminController.getProducts);
 router.get(
