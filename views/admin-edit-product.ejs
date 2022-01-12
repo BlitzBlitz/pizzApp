@@ -54,6 +54,8 @@
               action="/admin/products/Pizza/<% if(newItem){ %><%=0%><% }else{ %>   <%= product.id %> <% } %>/edit"
               method="post"
             >
+              <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+
               <div class="product-content">
                 <input
                   value="<%if(!newItem){%><%=product.name%><%}%>"
@@ -99,6 +101,7 @@
                 action="/admin/products/<%=product.category%>/<%=product.id%>/delete"
                 method="post"
               >
+                <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
                 <button
                   class="btn-delete <% if(newItem){%> hidden <%}%>"
                   type="submit"
