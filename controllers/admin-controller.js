@@ -1,5 +1,3 @@
-const express = require("express");
-const router = express.Router();
 const { Product } = require("../models/product-model");
 
 exports.getProducts = (req, res, next) => {
@@ -9,6 +7,7 @@ exports.getProducts = (req, res, next) => {
     res.render("admin", {
       products: products,
       category: category,
+      username: req.session.username,
     });
   });
 };
