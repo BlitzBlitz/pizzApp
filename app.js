@@ -10,9 +10,11 @@ const { ProductModel } = require("./models/product-model");
 const IngredientModel = require("./models/ingredient-model");
 const ProductIngredientModel = require("./models/productingredient-model");
 const session = require("express-session");
+const csfr = require("csurf");
 
 const app = express();
 
+//SESSION
 const SequelizeStore = require("connect-session-sequelize")(session.Store);
 
 app.use(
@@ -24,6 +26,7 @@ app.use(
   })
 );
 
+//VIEW ENGINE
 app.use(
   bodyParser.urlencoded({
     extended: true,
@@ -32,13 +35,22 @@ app.use(
 app.use(bodyParser.json());
 app.set("view engine", "ejs");
 app.set("views", "views");
-
 app.use(express.static(path.join(__dirname, "public"), { redirect: true }));
 app.use(favicon(path.join(__dirname, "public", "images", "favicon.ico")));
+
+//CSFR
+app.use(csfr());
+app.use((req, res, next) => {
+  res.locals.csrfToken = req.csrfToken();
+  next();
+});
+
+//ROUTES
 app.use("/product", productRoutes.router);
 app.use("/about", aboutRoutes.router);
 app.use("/admin", adminRoutes.router);
 
+//Models
 ProductModel.belongsToMany(IngredientModel, {
   through: ProductIngredientModel,
 });
