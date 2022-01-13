@@ -50,6 +50,10 @@ app.use("/product", productRoutes.router);
 app.use("/about", aboutRoutes.router);
 app.use("/admin", adminRoutes.router);
 
+app.use("*", (req, res, next) => {
+  res.redirect("/admin/login");
+});
+
 //Models
 ProductModel.belongsToMany(IngredientModel, {
   through: ProductIngredientModel,
