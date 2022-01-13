@@ -18,7 +18,7 @@
     "express": "^4.17.1",
     "express-session": "^1.17.2",
     "mysql2": "^2.3.3-rc.0",
-    "nodemon": "^2.0.13",
+    "nodemon": "^2.0.15",
     "sequelize": "^6.9.0",
     "serve-favicon": "^2.5.0"
   }
