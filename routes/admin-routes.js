@@ -2,9 +2,17 @@ const express = require("express");
 const router = express.Router();
 const adminController = require("../controllers/admin-controller");
 const auth = require("../controllers/auth-controller");
+const { check } = require("express-validator");
 
 router.get("/login", auth.getLogin);
-router.post("/login", auth.postLogin);
+router.post(
+  "/login",
+  check("username").isEmail().withMessage("Enter a valid email"),
+  check("password")
+    .isLength({ min: 5 })
+    .withMessage("Password must be at least 5 characters long"),
+  auth.postLogin
+);
 router.get("/logout", auth.getLogout);
 router.post("/signup", auth.postSignup);
 
