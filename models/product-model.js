@@ -38,6 +38,8 @@ exports.Product = class Product {
     this.image = image;
   }
 
+  //ToDo return promises to catch error in controller
+
   static fetchAll(callback) {
     ProductModel.findAll({ include: IngredientModel })
       .then((results) => {
@@ -63,7 +65,6 @@ exports.Product = class Product {
           );
         } else {
           result = new Product();
-          // result.category = "pizza";
         }
         callback(result);
       })
@@ -71,7 +72,7 @@ exports.Product = class Product {
         console.log("Fetch One failed\n" + err);
       });
   }
-  //TODO
+
   static addIngredients(savedProduct, ingredients, redirect) {
     let promises = [];
     for (let ingredient of ingredients) {
@@ -90,14 +91,15 @@ exports.Product = class Product {
     }
     Promise.all(promises)
       .then((result) => {
-        redirect();
+        return savedProduct.save().then(() => {
+          redirect();
+        });
       })
       .catch((err) => {
         console.log(err);
       });
   }
 
-  //TODO
   static updateProduct(foundProduct, product, redirect) {
     foundProduct.name = product.name;
     foundProduct.price = product.price;
@@ -151,7 +153,6 @@ exports.Product = class Product {
       })
       .then((result) => {
         if (!found) {
-          // redirect();
         }
       })
       .catch((err) => {
