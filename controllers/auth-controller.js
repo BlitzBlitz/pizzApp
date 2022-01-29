@@ -1,5 +1,6 @@
 const { UserModel } = require("../models/user-model");
 const bcrypt = require("bcrypt");
+const { validationResult } = require("express-validator");
 
 exports.isAuth = (req, res, next) => {
   if (req.session.username) {
@@ -10,7 +11,7 @@ exports.isAuth = (req, res, next) => {
 };
 
 exports.getLogin = (req, res, next) => {
-  res.render("admin-login");
+  res.render("admin-login", { error: "", message: "" });
 };
 exports.postLogin = (req, res, next) => {
   UserModel.findOne({ where: { username: req.body.username } }).then((user) => {
@@ -27,11 +28,21 @@ exports.postLogin = (req, res, next) => {
             res.redirect("/admin/products/pizza");
           });
         } else {
-          res.redirect("/admin/login");
+          res.status(401).render("admin-login", {
+            error: "Invalid username or password",
+          });
         }
       });
     } else {
-      res.redirect("/admin/login");
+      if (!validationResult(req).isEmpty()) {
+        res.status(422).render("admin-login", {
+          error: validationResult(req).array()[0].msg,
+        });
+      } else {
+        res.status(401).render("admin-login", {
+          error: "Invalid username or password",
+        });
+      }
     }
   });
 };
@@ -52,7 +63,10 @@ exports.postSignup = (req, res, next) => {
           username: req.body.username,
           password: hash,
         }).then((user) => {
-          res.redirect("/admin/login");
+          res.render("admin-login", {
+            error: "",
+            message: "User created successfully",
+          });
         });
       });
     }
