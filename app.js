@@ -3,6 +3,7 @@ var bodyParser = require("body-parser");
 const productRoutes = require("./routes/product-routes");
 const aboutRoutes = require("./routes/about-routes");
 const adminRoutes = require("./routes/admin-routes");
+const errorRoutes = require("./routes/error-routes");
 const path = require("path");
 const favicon = require("serve-favicon");
 const sequelize = require("./util/database");
@@ -49,9 +50,16 @@ app.use((req, res, next) => {
 app.use("/product", productRoutes.router);
 app.use("/about", aboutRoutes.router);
 app.use("/admin", adminRoutes.router);
+app.use(errorRoutes.router);
 
+//WRONG TURN
 app.use("*", (req, res, next) => {
   res.redirect("/admin/login");
+});
+
+//ERROR HANDLER
+app.use((error, req, res, next) => {
+  res.redirect("/500");
 });
 
 //Models

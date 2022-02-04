@@ -41,23 +41,22 @@ exports.Product = class Product {
   //ToDo return promises to catch error in controller
 
   static fetchAll(callback) {
-    ProductModel.findAll({ include: IngredientModel })
-      .then((results) => {
+    return ProductModel.findAll({ include: IngredientModel }).then(
+      (results) => {
         results = results.map((element) => {
           element.dataValues.ingredients = element.dataValues.ingredients.map(
             (ingredient) => ingredient.name
           );
           return element.dataValues;
         });
+        // throw new Error("My 1Error");
         callback(results);
-      })
-      .catch((err) => {
-        console.log("Fetch All failed" + err);
-      });
+      }
+    );
   }
   static fetchOne(productId, callback) {
-    ProductModel.findByPk(productId, { include: IngredientModel })
-      .then((result) => {
+    return ProductModel.findByPk(productId, { include: IngredientModel }).then(
+      (result) => {
         if (result) {
           result = result.dataValues;
           result.ingredients = result.ingredients.map(
@@ -67,10 +66,8 @@ exports.Product = class Product {
           result = new Product();
         }
         callback(result);
-      })
-      .catch((err) => {
-        console.log("Fetch One failed\n" + err);
-      });
+      }
+    );
   }
 
   static addIngredients(savedProduct, ingredients, redirect) {
@@ -78,26 +75,18 @@ exports.Product = class Product {
     for (let ingredient of ingredients) {
       let addingPromis = IngredientModel.findOrCreate({
         where: { name: ingredient },
-      })
-        .then((result) => {
-          return savedProduct.addIngredient(result[0], {
-            through: ProductIngredientModel,
-          });
-        })
-        .catch((err) => {
-          console.log("Error adding ingredients: " + ingredient + err);
+      }).then((result) => {
+        return savedProduct.addIngredient(result[0], {
+          through: ProductIngredientModel,
         });
+      });
       promises.push(addingPromis);
     }
-    Promise.all(promises)
-      .then((result) => {
-        return savedProduct.save().then(() => {
-          redirect();
-        });
-      })
-      .catch((err) => {
-        console.log(err);
+    return Promise.all(promises).then((result) => {
+      return savedProduct.save().then(() => {
+        redirect();
       });
+    });
   }
 
   static updateProduct(foundProduct, product, redirect) {
@@ -108,21 +97,18 @@ exports.Product = class Product {
 
     let newIngsNames = product.ingredients;
 
-    foundProduct.getIngredients().then((oldIngs) => {
+    return foundProduct.getIngredients().then((oldIngs) => {
       let oldIngsNames = oldIngs.map(
         (ingredient) => ingredient.dataValues.name
       );
       //Removing old ings
-      IngredientModel.findAll({ where: { name: oldIngsNames } })
+      return IngredientModel.findAll({ where: { name: oldIngsNames } })
         .then((foundIngs) => {
           return foundProduct.removeIngredients(foundIngs);
         })
         .then((result) => {
           //Adding new Ones
           this.addIngredients(foundProduct, newIngsNames, redirect);
-        })
-        .catch((err) => {
-          console.log(err);
         });
     });
   }
@@ -130,46 +116,35 @@ exports.Product = class Product {
   static save(product, redirect) {
     product.ingredients = product.ingredients.split(", ");
     let found = 0;
-    ProductModel.findByPk(product.id)
-      .then((foundProduct) => {
-        //if product exist => update
-        if (foundProduct != null) {
-          found = 1;
-          return this.updateProduct(foundProduct, product, redirect);
-        } else {
-          //if product does not exist => create
-          return ProductModel.create(product)
-            .then((savedProduct) => {
-              return this.addIngredients(
-                savedProduct,
-                product.ingredients,
-                redirect
-              );
-            })
-            .catch((err) => {
-              console.log(err);
-            });
-        }
-      })
-      .then((result) => {
-        if (!found) {
-        }
-      })
-      .catch((err) => {
-        console.log("Error saving: " + product + err);
-      });
+    return ProductModel.findByPk(product.id).then((foundProduct) => {
+      //if product exist => update
+      if (foundProduct != null) {
+        found = 1;
+        return this.updateProduct(foundProduct, product, redirect);
+      } else {
+        //if product does not exist => create
+        return ProductModel.create(product)
+          .then((savedProduct) => {
+            return this.addIngredients(
+              savedProduct,
+              product.ingredients,
+              redirect
+            );
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      }
+    });
   }
 
   static delete(productId, redirect) {
-    ProductModel.findByPk(productId)
+    return ProductModel.findByPk(productId)
       .then((product) => {
         return product.destroy();
       })
       .then((result) => {
         redirect();
-      })
-      .catch((err) => {
-        console.log("Error deleting product with id: " + productId + err);
       });
   }
 };

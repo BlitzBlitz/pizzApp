@@ -9,6 +9,8 @@ exports.getProducts = (req, res, next) => {
       category: category,
       username: req.session.username,
     });
+  }).catch((err) => {
+    next(new Error(err));
   });
 };
 
