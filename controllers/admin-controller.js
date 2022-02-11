@@ -30,7 +30,6 @@ exports.editProduct = (req, res, next) => {
   let product = { ...req.body };
   delete product._csrf;
   product.image = req.file.path;
-  console.log(product);
   if (req.body.id == 0) {
     product.id = 0;
     product.category = req.params.category;

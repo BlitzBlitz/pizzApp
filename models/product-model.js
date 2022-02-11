@@ -2,6 +2,8 @@ const Sequelize = require("sequelize");
 const sequelize = require("../util/database");
 const IngredientModel = require("./ingredient-model");
 const ProductIngredientModel = require("./productingredient-model");
+const fs = require("fs");
+const path = require("path");
 
 const ProductModel = sequelize.define("product", {
   id: {
@@ -90,6 +92,12 @@ exports.Product = class Product {
   }
 
   static updateProduct(foundProduct, product, redirect) {
+    fs.unlink(path.join(__dirname, "..", foundProduct.image), (err) => {
+      if (err) {
+        console.log(err);
+      }
+      console.log("Deleted: " + foundProduct.image);
+    });
     foundProduct.name = product.name;
     foundProduct.price = product.price;
     foundProduct.category = product.category;
@@ -141,6 +149,12 @@ exports.Product = class Product {
   static delete(productId, redirect) {
     return ProductModel.findByPk(productId)
       .then((product) => {
+        fs.unlink(path.join(__dirname, "..", product.image), (err) => {
+          if (err) {
+            console.log(err);
+          }
+          console.log("Deleted: " + product.image);
+        });
         return product.destroy();
       })
       .then((result) => {
