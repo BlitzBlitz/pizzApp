@@ -1,5 +1,6 @@
 const express = require("express");
-var bodyParser = require("body-parser");
+const bodyParser = require("body-parser");
+const multer = require("multer");
 const productRoutes = require("./routes/product-routes");
 const aboutRoutes = require("./routes/about-routes");
 const adminRoutes = require("./routes/admin-routes");
@@ -12,6 +13,7 @@ const IngredientModel = require("./models/ingredient-model");
 const ProductIngredientModel = require("./models/productingredient-model");
 const session = require("express-session");
 const csfr = require("csurf");
+const { log } = require("console");
 
 const app = express();
 
@@ -33,11 +35,26 @@ app.use(
     extended: true,
   })
 );
+
 app.use(bodyParser.json());
 app.set("view engine", "ejs");
 app.set("views", "views");
-app.use(express.static(path.join(__dirname, "public"), { redirect: true }));
+app.use(express.static(path.join(__dirname, "public")));
+
 app.use(favicon(path.join(__dirname, "public", "images", "favicon.ico")));
+
+//File Handling
+
+const fileStorage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, "images");
+  },
+  filename: function (req, file, cb) {
+    cb(null, Date.now() + "-" + file.originalname);
+  },
+});
+app.use(multer({ storage: fileStorage }).single("image"));
+app.use("/images", express.static(path.join(__dirname, "images")));
 
 //CSFR
 app.use(csfr());
@@ -60,6 +77,7 @@ app.use("*", (req, res, next) => {
 //ERROR HANDLER
 app.use((error, req, res, next) => {
   res.redirect("/500");
+  console.log(error);
 });
 
 //Models

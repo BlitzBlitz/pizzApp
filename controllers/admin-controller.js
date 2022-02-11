@@ -27,11 +27,15 @@ exports.getProduct = (req, res, next) => {
 };
 
 exports.editProduct = (req, res, next) => {
+  let product = { ...req.body };
+  delete product._csrf;
+  product.image = req.file.path;
+  console.log(product);
   if (req.body.id == 0) {
-    req.body.id = 0;
-    req.body.category = req.params.category;
+    product.id = 0;
+    product.category = req.params.category;
   }
-  Product.save(req.body, () => {
+  Product.save(product, () => {
     res.redirect("/admin/products/pizza");
   });
 };
