@@ -96,7 +96,6 @@ exports.Product = class Product {
       if (err) {
         console.log(err);
       }
-      console.log("Deleted: " + foundProduct.image);
     });
     foundProduct.name = product.name;
     foundProduct.price = product.price;
@@ -153,7 +152,6 @@ exports.Product = class Product {
           if (err) {
             console.log(err);
           }
-          console.log("Deleted: " + product.image);
         });
         return product.destroy();
       })
