@@ -30,6 +30,7 @@ exports.postLogin = (req, res, next) => {
         } else {
           res.status(401).render("admin-login", {
             error: "Invalid username or password",
+            message: "",
           });
         }
       });
@@ -41,6 +42,7 @@ exports.postLogin = (req, res, next) => {
       } else {
         res.status(401).render("admin-login", {
           error: "Invalid username or password",
+          message: "",
         });
       }
     }

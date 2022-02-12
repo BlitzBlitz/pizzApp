@@ -1,4 +1,6 @@
 const { Product } = require("../models/product-model");
+const fs = require("fs");
+const path = require("path");
 
 exports.getProducts = (req, res, next) => {
   const category = req.params["category"];
@@ -11,6 +13,31 @@ exports.getProducts = (req, res, next) => {
     });
   }).catch((err) => {
     next(new Error(err));
+  });
+};
+
+exports.getProfilePicture = (req, res, next) => {
+  const username = req.session.username;
+  const name = username.split("@")[0]; //should have problems with emails with same name
+  const imagePath = path.join(
+    __dirname,
+    "..",
+    "data",
+    "profiles",
+    name,
+    name + ".png"
+  );
+  //Check if the authenticated user is the one who is trying to access the profile picture
+  fs.readFile(imagePath, (err, data) => {
+    if (err) {
+      return next(new Error(err));
+    } else {
+      res.setHeader("Content-Type", "image/png");
+      res.setHeader("Content-Disposition", "inline; filename=" + name + ".png");
+      // res.send(data);
+      const file = fs.createReadStream(imagePath);
+      file.pipe(res);
+    }
   });
 };
 

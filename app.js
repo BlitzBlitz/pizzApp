@@ -77,7 +77,7 @@ app.use("*", (req, res, next) => {
 //ERROR HANDLER
 app.use((error, req, res, next) => {
   res.redirect("/500");
-  console.log(error);
+  console.log(error + "121222");
 });
 
 //Models

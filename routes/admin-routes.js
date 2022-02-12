@@ -22,6 +22,7 @@ router.get(
   auth.isAuth,
   adminController.getProduct
 );
+router.get("/profile-picture", auth.isAuth, adminController.getProfilePicture);
 router.post(
   "/products/:category/:productId/edit",
   auth.isAuth,
