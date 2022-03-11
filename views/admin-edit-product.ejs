@@ -52,7 +52,7 @@
           <div class="products-container">
             <form
               action="/admin/products/Pizza/<% if(newItem){ %><%=0%><% }else{ %>   <%= product.id %> <% } %>/edit"
-              method="post"
+              method="post" enctype="multipart/form-data"
             >
               <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
 
@@ -76,10 +76,13 @@
                   <span>$</span>
                 </div>
                 <input
-                  value="<% if(!newItem){ %><%=product.image%><% } %>"
+                  type="file"
+                  id="image"
                   name="image"
                   placeholder="Image Url"
                 />
+                <!-- <label for="image" id="label-image">
+                  <i class="fas fa-upload"></i>  Choose a photo</label> -->
                 <input
                   type="hidden"
                   name="category"

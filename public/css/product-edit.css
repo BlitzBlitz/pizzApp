@@ -202,6 +202,22 @@ li {
   margin: 5px 0px;
   font-size: 14px;
 }
+#image {
+  /* display: none; */
+}
+#label-image {
+  display: flex;
+  align-items: center;
+  color: white;
+  font-size: 14px;
+  font-weight: bold;
+  padding: 10px 15px;
+  margin: 5px 0;
+  background-color: #ee1d21;
+}
+#label-image i {
+  margin-right: 10px;
+}
 .product-content button {
   padding: 10px 15px;
   margin: 25px 0px;
