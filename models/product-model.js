@@ -20,7 +20,7 @@ const ProductModel = sequelize.define("product", {
     type: Sequelize.DOUBLE,
     allowNull: false,
   },
-  category: {
+  category_id: {
     type: Sequelize.STRING,
     allowNull: false,
   },
@@ -40,8 +40,6 @@ exports.Product = class Product {
     this.image = image;
   }
 
-  //ToDo return promises to catch error in controller
-
   static fetchAll(callback) {
     return ProductModel.findAll({ include: IngredientModel }).then(
       (results) => {
@@ -51,11 +49,26 @@ exports.Product = class Product {
           );
           return element.dataValues;
         });
-        // throw new Error("My 1Error");
         callback(results);
       }
     );
   }
+
+  static fetchAllByCategory(category, callback) {
+    return ProductModel.findAll({
+      where: { category: category },
+      include: IngredientModel,
+    }).then((results) => {
+      results = results.map((element) => {
+        element.dataValues.ingredients = element.dataValues.ingredients.map(
+          (ingredient) => ingredient.name
+        );
+        return element.dataValues;
+      });
+      callback(results);
+    });
+  }
+
   static fetchOne(productId, callback) {
     return ProductModel.findByPk(productId, { include: IngredientModel }).then(
       (result) => {

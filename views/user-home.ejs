@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>pizzApp | The best pizza in town</title>
+    <link rel="stylesheet" href="/css/user-home.css" />
+  </head>
+  <body>
+    <div class="page-container">
+      <div class="sidenav">
+        <div class="logo">
+          <img src="/images/logo/logo.png" alt="" />
+        </div>
+        <div class="categories">
+          <a
+            href="/home?category=hamburger"
+            class="category-btn <%= category === 'hamburger' ? 'category-btn-avtice' : '' %>"
+          >
+            <img src="/images/category/hamburger.png" alt="" />
+          </a>
+          <a
+            href="/home?category=pizza"
+            class="category-btn <%= category === 'pizza' ? 'category-btn-avtice' : '' %>"
+          >
+            <img src="/images/category/pizzamin.png" alt="" />
+          </a>
+          <a
+            href="/home?category=frenchfr"
+            class="category-btn <%= category === 'frenchfr' ? 'category-btn-avtice' : '' %>"
+          >
+            <img src="/images/category/frenchfr.png" alt="" />
+          </a>
+          <a
+            href="/home?category=crepe"
+            class="category-btn <%= category === 'crepe' ? 'category-btn-avtice' : '' %>"
+          >
+            <img src="/images/category/crepe.png" alt="" />
+          </a>
+        </div>
+      </div>
+      <div class="main-area">
+        <div class="navbar">
+          <a href="/home" class="navbar-link navbar-link-active">Food</a>
+          <a href="/about" class="navbar-link">About</a>
+          <a href="/contact" class="navbar-link">Contact</a>
+        </div>
+        <div class="products-bar">
+          <a
+            href="/home?category=<%=category%>&product=1"
+            class="product-btn <%= product == 1 ? 'product-btn-active' : '' %>"
+          >
+            <img src="/images/pizza/4 seasons icon.png" alt="" />
+          </a>
+          <a
+            href="/home?category=<%=category%>&product=2"
+            class="product-btn <%= product == 2 ? 'product-btn-active' : '' %>"
+          >
+            <img src="/images/pizza/capricozza icon.png" alt="" />
+          </a>
+          <a
+            href="/home?category=<%=category%>&product=3"
+            class="product-btn <%= product == 3 ? 'product-btn-active' : '' %>"
+          >
+            <img src="/images/pizza/cheese icon.png" alt="" />
+          </a>
+          <a
+            href="/home?category=<%=category%>&product=4"
+            class="product-btn <%= product == 4 ? 'product-btn-active' : '' %>"
+          >
+            <img src="/images/pizza/mashroom icon.png" alt="" />
+          </a>
+          <a
+            href="/home?category=<%=category%>&product=5"
+            class="product-btn <%= product == 5 ? 'product-btn-active' : '' %>"
+          >
+            <img src="/images/pizza/veggi icon.png" alt="" />
+          </a>
+          <a
+            href="/home?category=<%=category%>&product=6"
+            class="product-btn <%= product == 6 ? 'product-btn-active' : '' %>"
+          >
+            <img src="/images/pizza/pepperoni icon.png" alt="" />
+          </a>
+        </div>
+        <div class="product">
+          <div class="product-info">
+            <h1 class="product-name">Hottest Pizza</h1>
+            <p class="product-ingredients">With Tomato & Origana</p>
+            <p class="product-price"><span class="dollar">$</span>29.99</p>
+          </div>
+          <div class="product-image">
+            <img src="/images/pizza/capricozza.png" alt="" />
+          </div>
+        </div>
+        <div class="footer">
+          <div class="social-links">
+            <a href="#" class="social-link">
+              <img src="/images/social/facebook.png" alt="" />
+            </a>
+            <a href="#" class="social-link">
+              <img src="/images/social/instagram.png" alt="" />
+            </a>
+            <a href="#" class="social-link">
+              <img src="/images/social/twitter.png" alt="" />
+            </a>
+          </div>
+          <div class="order-buttons">
+            <select class="order-btn">
+              <option value="L">Size: L</option>
+              <option value="M" selected>Size: M</option>
+              <option value="S">Size: S</option>
+            </select>
+            <input
+              class="order-btn"
+              type="number"
+              name="product"
+              list="productName"
+            />
+            <datalist id="productName">
+              <option value="1">1</option>
+              <option value="2">2</option>
+              <option value="3">3</option>
+            </datalist>
+            <button class="order-btn order-add">Add to Cart</button>
+          </div>
+          <div class="order-now">
+            <button class="order-btn order-add">ORDER NOW</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
