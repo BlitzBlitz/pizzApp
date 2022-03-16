@@ -5,12 +5,14 @@ const productRoutes = require("./routes/product-routes");
 const aboutRoutes = require("./routes/about-routes");
 const adminRoutes = require("./routes/admin-routes");
 const errorRoutes = require("./routes/error-routes");
+const userRoutes = require("./routes/user-routes");
 const path = require("path");
 const favicon = require("serve-favicon");
 const sequelize = require("./util/database");
 const { ProductModel } = require("./models/product-model");
 const IngredientModel = require("./models/ingredient-model");
 const ProductIngredientModel = require("./models/productingredient-model");
+const CategoryModel = require("./models/category-model");
 const session = require("express-session");
 const csfr = require("csurf");
 const { log } = require("console");
@@ -67,6 +69,7 @@ app.use((req, res, next) => {
 app.use("/product", productRoutes.router);
 app.use("/about", aboutRoutes.router);
 app.use("/admin", adminRoutes.router);
+app.use("/home", userRoutes.router);
 app.use(errorRoutes.router);
 
 //WRONG TURN
@@ -84,6 +87,10 @@ app.use((error, req, res, next) => {
 ProductModel.belongsToMany(IngredientModel, {
   through: ProductIngredientModel,
 });
+CategoryModel.hasMany(ProductModel, {
+  foreignKey: { allowNull: false },
+});
+ProductModel.belongsTo(CategoryModel);
 IngredientModel.belongsToMany(ProductModel, {
   through: ProductIngredientModel,
   onDelete: "cascade",
