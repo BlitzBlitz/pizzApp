@@ -15,7 +15,7 @@ const ProductModel = sequelize.define("product", {
   },
   name: {
     type: Sequelize.STRING,
-    allowNull: false,
+    // allowNull: false,
   },
   price: {
     type: Sequelize.DOUBLE,
@@ -84,7 +84,6 @@ exports.Product = class Product {
 
   static addIngredients(savedProduct, ingredients) {
     let promises = [];
-    console.log(ingredients);
     for (let ingredient of ingredients) {
       let addingPromis = IngredientModel.findOrCreate({
         where: { name: ingredient },

@@ -10,7 +10,7 @@
       crossorigin="anonymous"
     ></script>
     <link rel="stylesheet" href="/css/admin-styles.css" />
-    <link rel="icon" href="favicon.ico?v=1.1">
+    <link rel="icon" href="favicon.ico?v=1.1" />
     <title>pizzApp</title>
   </head>
   <body>
@@ -21,20 +21,14 @@
           <img src="/images/logo/logo.png" alt="" />
         </div>
         <div class="categories">
-          <a href="./Hamburger" class="btn <%= category ==='Hamburger' ? 'visited' : '' %> category">
-            <img src="/images/category/hamburger.png" alt="hamburger" />
+          <% for (let i = 0; i < categories.length; i++) { %>
+          <a
+            href="/admin/products/<%=categories[i].name%>"
+            class="category btn <%= category === categories[i].name ? 'visited' : '' %>"
+          >
+            <img src="<%=categories[i].image%>" alt="" />
           </a>
-          <a href="./Pizza" class="btn <%= category ==='Pizza' ? 'visited' : '' %>  category">
-            <img src="/images/category/pizzamin.png" alt="" />
-          </a>
-          
-
-          <a href="./Crepe" class="btn  <%= category ==='Crepe' ? 'visited' : '' %> category">
-            <img src="/images/category/crepe.png" alt="" />
-          </a>
-          <a href="./Drinks"class="btn <%= category ==='Drinks' ? 'visited' : '' %> category">
-            <img src="/images/category/sandwich.png" alt="" />
-          </a>
+          <% } %>
         </div>
       </div>
 
@@ -47,64 +41,55 @@
             <li><a href="#">Contact </a><span>Us</span></li>
           </ul>
           <ul>
-            <li><a href="#"> <%=username.split('@')[0].toUpperCase() %> </a></li>
-            <img id="profile-picture" src="/admin/profile-picture" alt="">
+            <li>
+              <a href="#"> <%=username.split('@')[0].toUpperCase() %> </a>
+            </li>
+            <img id="profile-picture" src="/admin/profile-picture" alt="" />
             <li><a href="/admin/logout">Log out </a></li>
           </ul>
         </div>
         <!-- Hero -->
         <div class="hero">
           <div class="quick-button-conaitner">
-            <a href="/admin/products/pizza/0/edit?newItem=true" class="btn">Add New <i class="fas fa-plus-square"></i></a>
+            <a
+              href="/admin/products/<%=category%>/0/edit?newItem=true"
+              class="btn"
+              >Add New <i class="fas fa-plus-square"></i
+            ></a>
           </div>
           <div class="products-container">
-              <% for(let product of products){ %>
-              <a href="<%=product.category %>/<%=product.id %>/edit " class="product-card">
-                  <div class="content">
-                    <h1><%=product.name%></h1>
-                    <p>With 
-                      <%=product.ingredients %> 
-                    </p>
-                    <h1><span>$</span><span class="thin"><%=product.price %> </span></h1>
-                  </div>
-                  <div class="image" >
-                    <img src="/<%=product.image %> " alt="" id="product-image" />
-                  </div>
-              </a>
-              <% } %> 
-            </div>
+            <% for(let product of products){ %>
+            <a
+              href="<%=category %>/<%=product.id %>/edit "
+              class="product-card"
+            >
+              <div class="content">
+                <h1><%=product.name%></h1>
+                <p>With <%=product.ingredients %></p>
+                <h1>
+                  <span>$</span><span class="thin"><%=product.price %> </span>
+                </h1>
+              </div>
+              <div class="image">
+                <img src="/<%=product.image %> " alt="" id="product-image" />
+              </div>
+            </a>
+            <% } %>
+          </div>
         </div>
 
-
         <!-- Footer -->
-         <div class="items">
-            <div class="social">
-              <i class="fab fa-facebook-f"></i>
-              <i class="fab fa-twitter"></i>
-              <i class="fab fa-instagram-square"></i>
-            </div>
-            <div class="buttons">
-              <select class="btns bg-dark">
-                <option value="L">Size: L</option>
-                <option value="M" selected>Size: M</option>
-                <option value="S">Size: S</option>
-              </select>
-              <div id="amount" class="bg-dark">
-                <button><i class="fas fa-minus"></i></button>
-                <span>01</span>
-                <button><i class="fas fa-plus"></i></button>                
-              </div>
-              <button class="btns bg-light">
-                Add to Cart</i>
-              </button>
-            </div>
-            <div class="next">
-              <i class="fas fa-long-arrow-alt-right fas fa-3x"></i>
-            </div>
+        <div class="items">
+          <div class="social">
+            <i class="fab fa-facebook-f"></i>
+            <i class="fab fa-twitter"></i>
+            <i class="fab fa-instagram-square"></i>
           </div>
+          <div class="next">
+            <i class="fas fa-long-arrow-alt-right fas fa-3x"></i>
+          </div>
+        </div>
       </div>
     </div>
-
   </body>
-
 </html>

@@ -11,7 +11,7 @@ const IngredientModel = sequelize.define("ingredient", {
   name: {
     type: Sequelize.STRING,
     unique: true,
-    allowNull: false,
+    // allowNull: false,
   },
   //   price: {                               //TODO : Add later for financier features to calculate the cost
   //     type: Sequelize.DOUBLE,
