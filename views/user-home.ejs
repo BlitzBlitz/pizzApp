@@ -14,30 +14,14 @@
           <img src="/images/logo/logo.png" alt="" />
         </div>
         <div class="categories">
+          <% for (let i = 0; i < categories.length; i++) { %>
           <a
-            href="/home?category=hamburger"
-            class="category-btn <%= category === 'hamburger' ? 'category-btn-avtice' : '' %>"
+            href="/home?category=<%=categories[i].name%>"
+            class="category-btn <%= category === categories[i].name ? 'category-btn-avtice' : '' %>"
           >
-            <img src="/images/category/hamburger.png" alt="" />
+            <img src="<%=categories[i].image%>" alt="" />
           </a>
-          <a
-            href="/home?category=pizza"
-            class="category-btn <%= category === 'pizza' ? 'category-btn-avtice' : '' %>"
-          >
-            <img src="/images/category/pizzamin.png" alt="" />
-          </a>
-          <a
-            href="/home?category=frenchfr"
-            class="category-btn <%= category === 'frenchfr' ? 'category-btn-avtice' : '' %>"
-          >
-            <img src="/images/category/frenchfr.png" alt="" />
-          </a>
-          <a
-            href="/home?category=crepe"
-            class="category-btn <%= category === 'crepe' ? 'category-btn-avtice' : '' %>"
-          >
-            <img src="/images/category/crepe.png" alt="" />
-          </a>
+          <% } %>
         </div>
       </div>
       <div class="main-area">

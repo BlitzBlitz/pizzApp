@@ -4,6 +4,7 @@ const IngredientModel = require("./ingredient-model");
 const ProductIngredientModel = require("./productingredient-model");
 const fs = require("fs");
 const path = require("path");
+const CategoryModel = require("./category-model");
 
 const ProductModel = sequelize.define("product", {
   id: {
@@ -18,10 +19,6 @@ const ProductModel = sequelize.define("product", {
   },
   price: {
     type: Sequelize.DOUBLE,
-    allowNull: false,
-  },
-  category_id: {
-    type: Sequelize.STRING,
     allowNull: false,
   },
   image: {
@@ -56,7 +53,7 @@ exports.Product = class Product {
 
   static fetchAllByCategory(category, callback) {
     return ProductModel.findAll({
-      where: { category: category },
+      where: { categoryName: category },
       include: IngredientModel,
     }).then((results) => {
       results = results.map((element) => {
@@ -85,8 +82,9 @@ exports.Product = class Product {
     );
   }
 
-  static addIngredients(savedProduct, ingredients, redirect) {
+  static addIngredients(savedProduct, ingredients) {
     let promises = [];
+    console.log(ingredients);
     for (let ingredient of ingredients) {
       let addingPromis = IngredientModel.findOrCreate({
         where: { name: ingredient },
@@ -97,10 +95,8 @@ exports.Product = class Product {
       });
       promises.push(addingPromis);
     }
-    return Promise.all(promises).then((result) => {
-      return savedProduct.save().then(() => {
-        redirect();
-      });
+    return Promise.all(promises).then(() => {
+      return savedProduct.save();
     });
   }
 
@@ -112,11 +108,9 @@ exports.Product = class Product {
     });
     foundProduct.name = product.name;
     foundProduct.price = product.price;
-    foundProduct.category = product.category;
     foundProduct.image = product.image;
 
     let newIngsNames = product.ingredients;
-
     return foundProduct.getIngredients().then((oldIngs) => {
       let oldIngsNames = oldIngs.map(
         (ingredient) => ingredient.dataValues.name
@@ -128,7 +122,11 @@ exports.Product = class Product {
         })
         .then((result) => {
           //Adding new Ones
-          this.addIngredients(foundProduct, newIngsNames, redirect);
+          this.addIngredients(foundProduct, newIngsNames).then(() => {
+            return foundProduct.save().then(() => {
+              redirect();
+            });
+          });
         });
     });
   }
@@ -137,27 +135,28 @@ exports.Product = class Product {
     product.ingredients = product.ingredients.split(", ");
     let found = 0;
     return ProductModel.findByPk(product.id).then((foundProduct) => {
-      //if product exist => update
       if (foundProduct != null) {
         found = 1;
         return this.updateProduct(foundProduct, product, redirect);
       } else {
-        //if product does not exist => create
-        return ProductModel.create(product)
-          .then((savedProduct) => {
-            return this.addIngredients(
-              savedProduct,
-              product.ingredients,
-              redirect
-            );
-          })
-          .catch((err) => {
-            console.log(err);
-          });
+        return CategoryModel.findByPk(product.category).then((category) => {
+          if (category) {
+            let buildedProduct = ProductModel.build(product);
+            buildedProduct.setCategory(category);
+            return buildedProduct.save().then(() => {
+              this.addIngredients(buildedProduct, product.ingredients).then(
+                () => {
+                  redirect();
+                }
+              );
+            });
+          } else {
+            throw "Category not found";
+          }
+        });
       }
     });
   }
-
   static delete(productId, redirect) {
     return ProductModel.findByPk(productId)
       .then((product) => {

@@ -88,7 +88,7 @@ ProductModel.belongsToMany(IngredientModel, {
   through: ProductIngredientModel,
 });
 CategoryModel.hasMany(ProductModel, {
-  foreignKey: "categoryId",
+  foreignKey: { allowNull: false },
 });
 ProductModel.belongsTo(CategoryModel);
 IngredientModel.belongsToMany(ProductModel, {

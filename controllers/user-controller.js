@@ -1,5 +1,6 @@
 const express = require("express");
 const { Product } = require("../models/product-model");
+const CategoryModel = require("../models/category-model");
 
 exports.getHome = (req, res, next) => {
   let category = req.query.category;
@@ -7,15 +8,29 @@ exports.getHome = (req, res, next) => {
   if (!category) {
     category = "pizza";
   }
-  //
-  Product.fetchAllByCategory(category, (products) => {
-    console.log(products);
-    res.render("user-home", {
-      products: products,
-      category: category,
-      product: products[0],
+  CategoryModel.findAll({ order: [["name", "DESC"]] })
+    .then((categories) => {
+      if (categories) {
+        categories = categories.map((category) => {
+          return {
+            name: category.dataValues.name,
+            image: category.dataValues.image,
+          };
+        });
+        return Product.fetchAllByCategory(category, (products) => {
+          res.render("user-home", {
+            products: products,
+            categories: categories,
+            category: category,
+            product: product,
+          });
+        });
+      } else {
+        throw new Error("Category not found");
+      }
+    })
+    .catch((err) => {
+      next(err);
     });
-  }).catch((err) => {
-    next(new Error(err));
-  });
+  //
 };
